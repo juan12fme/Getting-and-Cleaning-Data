@@ -16,4 +16,15 @@ featuresTest <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE)
 subject<-rbind(subjectTrain, subjectTest)
 activity<- rbin(activityTrain, activityTest)
 features<- rbind(featuresTrain, featuresTest)
-colnames(features)<- t(featureNames[2])
+colnames(features)<- t("featuresNames[2]")
+
+#merging the data
+colnames(activity)<-"Activity"
+colnames(subject)<-"Subject"
+completeData<-cbind(features, activity, subject)
+
+#extract mean and std deviation
+columnsWithMeanSTD <- grep(".*Mean.*|.*Std.*", names(completeData), ignore.case=TRUE)
+requiredColumns <- c(columnsWithMeanSTD, 562, 563)
+dim(completeData)
+
