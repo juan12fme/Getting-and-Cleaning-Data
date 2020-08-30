@@ -1,30 +1,18 @@
-#read supporting metadata
-featureNames <- read.table("UCI HAR Dataset/features.txt")
-activityLabels <- read.table("UCI HAR Dataset/activity_labels.txt", header = FALSE)
+#Assigning data frames
+features <- read.table("UCI HAR Dataset/features.txt", col.names = c("n","functions"))
+activities <- read.table("UCI HAR Dataset/activity_labels.txt", col.names = c("code", "activity"))
+subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt", col.names = "subject")
+x_test <- read.table("UCI HAR Dataset/test/X_test.txt", col.names = features$functions)
+y_test <- read.table("UCI HAR Dataset/test/y_test.txt", col.names = "code")
+subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt", col.names = "subject")
+x_train <- read.table("UCI HAR Dataset/train/X_train.txt", col.names = features$functions)
+y_train <- read.table("UCI HAR Dataset/train/y_train.txt", col.names = "code")
 
-#read training data
-subjectTrain <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE)
-activityTrain <- read.table("UCI HAR Dataset/train/y_train.txt", header = FALSE)
-featuresTrain <- read.table("UCI HAR Dataset/train/X_train.txt", header = FALSE)
+#merging train and test
+X <- rbind(x_train, x_test)
+Y <- rbind(y_train, y_test)
+Subject <- rbind(subject_train, subject_test)
+Merged_Data <- cbind(Subject, Y, X)
 
-#read test data
-subjectTest <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE)
-activityTest <- read.table("UCI HAR Dataset/test/y_test.txt", header = FALSE)
-featuresTest <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE)
-
-#merging train and test 
-subject<-rbind(subjectTrain, subjectTest)
-activity<- rbin(activityTrain, activityTest)
-features<- rbind(featuresTrain, featuresTest)
-colnames(features)<- t("featuresNames[2]")
-
-#merging the data
-colnames(activity)<-"Activity"
-colnames(subject)<-"Subject"
-completeData<-cbind(features, activity, subject)
-
-#extract mean and std deviation
-columnsWithMeanSTD <- grep(".*Mean.*|.*Std.*", names(completeData), ignore.case=TRUE)
-requiredColumns <- c(columnsWithMeanSTD, 562, 563)
-dim(completeData)
-
+#getting the mean and std deviation for each value
+TidyData <- Merged_Data %>% select(subject, code, contains("mean"), contains("std"))
